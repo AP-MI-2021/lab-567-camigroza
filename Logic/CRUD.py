@@ -14,6 +14,10 @@ def adauga_cheltuiala(id, nr_ap, suma, data, tip, lista):
     '''
     if get_by_id(id, lista) is not None:
         raise ValueError("Id-ul exista deja!")
+    if nr_ap < 0:
+        raise ValueError("Numarul apartamentului nu poate fi negativ!")
+    if tip != "intretinere" and tip != "canal" and tip != "alte cheltuieli":
+        raise ValueError("Dati un tip din cele precizate!")
     cheltuiala = creeaza_cheltuiala(id, nr_ap, suma, data, tip)
     return lista + [cheltuiala]
 
