@@ -1,5 +1,6 @@
 from Logic.CRUD import adauga_cheltuiala
 from Tests.test_all import run_all_tests
+from UI.command_line_console import menu
 from UI.console import run_menu
 
 
@@ -10,7 +11,8 @@ def main():
     lista = adauga_cheltuiala(2, 1, 500, "25.10.2021", "alte cheltuieli", lista)
     lista = adauga_cheltuiala(3, 2, 750, "24.10.2021", "canal", lista)
     lista = adauga_cheltuiala(4, 2, 950, "24.10.2021", "canal", lista)
-    run_menu(lista)
+    #run_menu(lista)
+    menu(lista)
 
 
 if __name__ == '__main__':
