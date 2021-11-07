@@ -1,5 +1,5 @@
 from Domain.cheltuiala import get_nr_ap, get_suma, get_data, get_tip, get_id
-from Logic.CRUD import adauga_cheltuiala, get_by_nr_ap, sterge_cheltuiala, modifica_cheltuiala
+from Logic.CRUD import adauga_cheltuiala, get_by_nr_ap, sterge_cheltuiala, modifica_cheltuiala, get_by_id
 
 
 def test_adauga_cheltuiala():
@@ -21,8 +21,17 @@ def test_sterge_cheltuiala():
 
     lista = sterge_cheltuiala(1, lista)
     assert len(lista) == 1
-    assert get_by_nr_ap(1, lista) is None
-    assert get_by_nr_ap(2, lista) is not None
+    assert get_by_id(1, lista) is None
+    assert get_by_id(2, lista) is not None
+
+    try:
+        lista = sterge_cheltuiala(3, lista)
+        assert False
+    except ValueError:
+        assert len(lista) == 1
+        assert get_by_id(2, lista) is not None
+    except Exception:
+        assert False
 
 
 def test_modifica_cheltuiala():

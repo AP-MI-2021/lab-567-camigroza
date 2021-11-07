@@ -67,6 +67,6 @@ def test_sume_lunare_per_apartament():
     rezultat = sume_lunare_per_apartament(lista)
 
     assert len(rezultat) == 3
-    assert rezultat[1] == {'luna': 10, 'suma': 1000}
-    assert rezultat[2] == {'luna': 11, 'suma': 500}
-    assert rezultat[3] == {'luna': 4, 'suma': 1700}
+    assert rezultat[1] == {'luna': '10', 'suma': 1000}
+    assert rezultat[2] == {'luna': '11', 'suma': 500}
+    assert rezultat[3] == {'luna': '04', 'suma': 1700}

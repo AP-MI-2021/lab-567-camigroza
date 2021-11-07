@@ -18,6 +18,14 @@ def adauga_cheltuiala(id, nr_ap, suma, data, tip, lista):
         raise ValueError("Numarul apartamentului nu poate fi negativ!")
     if tip != "intretinere" and tip != "canal" and tip != "alte cheltuieli":
         raise ValueError("Dati un tip din cele precizate!")
+    if len(data) < 10 or (data[2] != '.' and data[5] != '.'):
+        raise ValueError("Structura datei nu este conform cerintei!")
+    ziua = data[0] + data[1]
+    luna = data[3] + data[4]
+    if int(ziua) > 31:
+        raise ValueError("O luna nu poate avea mai mult de 31 zile!")
+    if int(luna) > 12:
+        raise ValueError("Nu exista mai mult de 12 luni in an!")
     cheltuiala = creeaza_cheltuiala(id, nr_ap, suma, data, tip)
     return lista + [cheltuiala]
 
@@ -61,16 +69,16 @@ def get_by_data(data, lista):
     return None
 
 
-def sterge_cheltuiala(nr_ap, lista):
+def sterge_cheltuiala(id, lista):
     '''
-    Sterge o cheltuiala cu numarul apartamentului dat din lista
-    :param nr_ap: int
+    Sterge o cheltuiala cu id-ul dat din lista
+    :param id: int
     :param lista: o lista de cheltuieli
-    :return: o lista de cheltuieli, fara elementul cu numarul apartamentului dat
+    :return: o lista de cheltuieli, fara elementul cu id-ul dat
     '''
-    if get_by_nr_ap(nr_ap, lista) is None:
-        raise ValueError("Nu exista o cheltuiala cu numarul apartamentului dat!")
-    return [cheltuiala for cheltuiala in lista if get_nr_ap(cheltuiala) != nr_ap]
+    if get_by_id(id, lista) is None:
+        raise ValueError("Nu exista o cheltuiala cu id-ul dat!")
+    return [cheltuiala for cheltuiala in lista if get_id(cheltuiala) != id]
 
 
 def modifica_cheltuiala(id, nr_ap, suma, data, tip, lista):
@@ -84,11 +92,11 @@ def modifica_cheltuiala(id, nr_ap, suma, data, tip, lista):
     :param lista: o lista de cheltuieli
     :return: lista modificata
     '''
-    if get_by_nr_ap(nr_ap, lista) is None:
-        raise ValueError("Nu exista o cheltuiala cu numarul apartamentului dat!")
+    if get_by_id(id, lista) is None:
+        raise ValueError("Nu exista o cheltuiala cu id-ul dat!")
     lista_noua = []
     for cheltuiala in lista:
-        if get_nr_ap(cheltuiala) == nr_ap:
+        if get_id(cheltuiala) == id:
             cheltuiala_noua = creeaza_cheltuiala(id, nr_ap, suma, data, tip)
             lista_noua.append(cheltuiala_noua)
         else:

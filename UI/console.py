@@ -13,40 +13,51 @@ def print_menu():
     print("6. Determinarea celei mai mari cheltuieli pentru fiecare tip de cheltuiala")
     print("7. Ordonarea cheltuielilor descrescator dupa suma")
     print("8. Afisarea sumelor lunare pentru fiecare apartament")
+    print("u. Undo")
+    print("r. Redo")
     print("a. Afisare cheltuiala")
     print("x. Iesire")
 
 
-def ui_adauga_cheltuiala(lista):
+def ui_adauga_cheltuiala(lista, undo_list, redo_list):
     try:
         id = int(input("Dati id-ul: "))
         nr_ap = int(input("Dati numarul apartamentului: "))
         suma = float(input("Dati suma: "))
         data = input("Dati data, sub forma DD.MM.YYYY: ")
         tip = input("Dati unul dintre tipurile 'intretinere', 'canal', 'alte cheltuieli': ")
-        return adauga_cheltuiala(id, nr_ap, suma, data, tip, lista)
+        rezultat = adauga_cheltuiala(id, nr_ap, suma, data, tip, lista)
+        undo_list.append(lista)
+        redo_list.clear()
+        return rezultat
     except ValueError as ve:
         print("Eroare: {}".format(ve))
         return lista
 
 
-def ui_sterge_cheltuiala(lista):
+def ui_sterge_cheltuiala(lista, undo_list, redo_list):
     try:
-        nr_ap = int(input("Dati numarul apartamentului cheltuielii de sters: "))
-        return sterge_cheltuiala(nr_ap, lista)
+        id = int(input("Dati id-ul cheltuielii de sters: "))
+        rezultat = sterge_cheltuiala(id, lista)
+        undo_list.append(lista)
+        redo_list.clear()
+        return rezultat
     except ValueError as ve:
         print("Eroare: {}".format(ve))
         return lista
 
 
-def ui_modifica_cheltuiala(lista):
+def ui_modifica_cheltuiala(lista, undo_list, redo_list):
     try:
         id = int(input("Dati id-ul: "))
         nr_ap = int(input("Dati numarul apartamentului cheltuielii de modificat: "))
         suma = float(input("Dati noua suma: "))
         data = input("Dati noua data: ")
         tip = input("Dati noul tip: ")
-        return modifica_cheltuiala(id, nr_ap, suma, data, tip, lista)
+        rezultat = modifica_cheltuiala(id, nr_ap, suma, data, tip, lista)
+        undo_list.append(lista)
+        redo_list.clear()
+        return rezultat
     except ValueError as ve:
         print("Eroare: {}".format(ve))
         return lista
@@ -57,20 +68,26 @@ def show_all(lista):
         print(to_string(cheltuiala))
 
 
-def ui_stergere_cheltuieli(lista):
+def ui_stergere_cheltuieli(lista, undo_list, redo_list):
     try:
         nr_ap = int(input("Dati numarul apartamentului pentru care trebuie sterse toate cheltuielile: "))
-        return stergere_cheltuieli(nr_ap, lista)
+        rezultat = stergere_cheltuieli(nr_ap, lista)
+        undo_list.append(lista)
+        redo_list.clear()
+        return rezultat
     except ValueError as ve:
         print("Eroare: {}".format(ve))
         return lista
 
 
-def ui_aduna_valoare(lista):
+def ui_aduna_valoare(lista, undo_list, redo_list):
     try:
         data = input("Dati data: ")
         valoare = float(input("Dati valoarea pe care doriti sa o adunati la toate cheltuielile din data citita: "))
-        return aduna_valoare(valoare, data, lista)
+        rezultat = aduna_valoare(valoare, data, lista)
+        undo_list.append(lista)
+        redo_list.clear()
+        return rezultat
     except ValueError as ve:
         print("Eroare: {}".format(ve))
         return lista
@@ -83,12 +100,14 @@ def ui_max_cheltuiala_per_tip(lista):
         print("Tipul '{}' are cheltuiala maxima in valoare de {} ron".format(tip, rezultat[tip]))
 
 
-def ui_ordonare_descrescator_suma(lista):
-    return ordonare_descrescator_suma(lista)
+def ui_ordonare_descrescator_suma(lista, undo_list, redo_list):
+    rezultat = ordonare_descrescator_suma(lista)
+    undo_list.append(lista)
+    redo_list.clear()
+    return rezultat
 
 
 def ui_sume_lunare_per_apartament(lista):
-    rezultat = {}
     rezultat = sume_lunare_per_apartament(lista)
     dict_luni = {
         "01": "Ianuarie",
@@ -113,25 +132,39 @@ def ui_sume_lunare_per_apartament(lista):
 
 
 def run_menu(lista):
+    undo_list = []
+    redo_list = []
     while True:
         print_menu()
         optiune = (input("Dati optiunea: "))
         if optiune == "1":
-            lista = ui_adauga_cheltuiala(lista)
+            lista = ui_adauga_cheltuiala(lista, undo_list, redo_list)
         elif optiune == "2":
-            lista = ui_sterge_cheltuiala(lista)
+            lista = ui_sterge_cheltuiala(lista, undo_list, redo_list)
         elif optiune == "3":
-            lista = ui_modifica_cheltuiala(lista)
+            lista = ui_modifica_cheltuiala(lista, undo_list, redo_list)
         elif optiune == "4":
-            lista = ui_stergere_cheltuieli(lista)
+            lista = ui_stergere_cheltuieli(lista, undo_list, redo_list)
         elif optiune == "5":
-            lista = ui_aduna_valoare(lista)
+            lista = ui_aduna_valoare(lista, undo_list, redo_list)
         elif optiune == "6":
             ui_max_cheltuiala_per_tip(lista)
         elif optiune == "7":
-            lista = ui_ordonare_descrescator_suma(lista)
+            lista = ui_ordonare_descrescator_suma(lista, undo_list, redo_list)
         elif optiune == "8":
             ui_sume_lunare_per_apartament(lista)
+        elif optiune == "u":
+            if len(undo_list) > 0:
+                redo_list.append(lista)
+                lista = undo_list.pop()
+            else:
+                print("Nu se poate face undo!")
+        elif optiune == "r":
+            if len(redo_list) > 0:
+                undo_list.append(lista)
+                lista = redo_list.pop()
+            else:
+                print("Nu se poate face redo!")
         elif optiune == "a":
             show_all(lista)
         elif optiune == "x":
