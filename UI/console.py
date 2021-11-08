@@ -19,13 +19,20 @@ def print_menu():
     print("x. Iesire")
 
 
-def ui_adauga_cheltuiala(lista, undo_list, redo_list):
+def ui_adauga_cheltuiala(lista, undo_list, redo_list, valori):
     try:
-        id = int(input("Dati id-ul: "))
-        nr_ap = int(input("Dati numarul apartamentului: "))
-        suma = float(input("Dati suma: "))
-        data = input("Dati data, sub forma DD.MM.YYYY: ")
-        tip = input("Dati unul dintre tipurile 'intretinere', 'canal', 'alte cheltuieli': ")
+        if len(valori) == 0:
+            id = int(input("Dati id-ul: "))
+            nr_ap = int(input("Dati numarul apartamentului: "))
+            suma = float(input("Dati suma: "))
+            data = input("Dati data, sub forma DD.MM.YYYY: ")
+            tip = input("Dati unul dintre tipurile 'intretinere', 'canal', 'alte cheltuieli': ")
+        else:
+            id = valori[0]
+            nr_ap = valori[1]
+            suma = valori[2]
+            data = valori[3]
+            tip = valori[4]
         rezultat = adauga_cheltuiala(id, nr_ap, suma, data, tip, lista)
         undo_list.append(lista)
         redo_list.clear()
@@ -35,9 +42,12 @@ def ui_adauga_cheltuiala(lista, undo_list, redo_list):
         return lista
 
 
-def ui_sterge_cheltuiala(lista, undo_list, redo_list):
+def ui_sterge_cheltuiala(lista, undo_list, redo_list, valori):
     try:
-        id = int(input("Dati id-ul cheltuielii de sters: "))
+        if len(valori) == 0:
+            id = int(input("Dati id-ul cheltuielii de sters: "))
+        else:
+            id = valori[0]
         rezultat = sterge_cheltuiala(id, lista)
         undo_list.append(lista)
         redo_list.clear()
@@ -47,13 +57,20 @@ def ui_sterge_cheltuiala(lista, undo_list, redo_list):
         return lista
 
 
-def ui_modifica_cheltuiala(lista, undo_list, redo_list):
+def ui_modifica_cheltuiala(lista, undo_list, redo_list, valori):
     try:
-        id = int(input("Dati id-ul: "))
-        nr_ap = int(input("Dati numarul apartamentului cheltuielii de modificat: "))
-        suma = float(input("Dati noua suma: "))
-        data = input("Dati noua data: ")
-        tip = input("Dati noul tip: ")
+        if len(valori) == 0:
+            id = int(input("Dati id-ul: "))
+            nr_ap = int(input("Dati numarul apartamentului cheltuielii de modificat: "))
+            suma = float(input("Dati noua suma: "))
+            data = input("Dati noua data: ")
+            tip = input("Dati noul tip: ")
+        else:
+            id = valori[0]
+            nr_ap = valori[1]
+            suma = valori[2]
+            data = valori[3]
+            tip = valori[4]
         rezultat = modifica_cheltuiala(id, nr_ap, suma, data, tip, lista)
         undo_list.append(lista)
         redo_list.clear()
@@ -131,18 +148,37 @@ def ui_sume_lunare_per_apartament(lista):
     ))
 
 
+def undo(lista, undo_list, redo_list):
+    if len(undo_list) > 0:
+        redo_list.append(lista)
+        lista = undo_list.pop()
+    else:
+        print("Nu se poate face undo!")
+    return lista
+
+
+def redo(lista, undo_list, redo_list):
+    if len(redo_list) > 0:
+        undo_list.append(lista)
+        lista = redo_list.pop()
+    else:
+        print("Nu se poate face redo!")
+    return lista
+
+
 def run_menu(lista):
     undo_list = []
     redo_list = []
+    valori = []
     while True:
         print_menu()
         optiune = (input("Dati optiunea: "))
         if optiune == "1":
-            lista = ui_adauga_cheltuiala(lista, undo_list, redo_list)
+            lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
         elif optiune == "2":
-            lista = ui_sterge_cheltuiala(lista, undo_list, redo_list)
+            lista = ui_sterge_cheltuiala(lista, undo_list, redo_list, valori)
         elif optiune == "3":
-            lista = ui_modifica_cheltuiala(lista, undo_list, redo_list)
+            lista = ui_modifica_cheltuiala(lista, undo_list, redo_list, valori)
         elif optiune == "4":
             lista = ui_stergere_cheltuieli(lista, undo_list, redo_list)
         elif optiune == "5":
@@ -154,17 +190,19 @@ def run_menu(lista):
         elif optiune == "8":
             ui_sume_lunare_per_apartament(lista)
         elif optiune == "u":
-            if len(undo_list) > 0:
-                redo_list.append(lista)
-                lista = undo_list.pop()
-            else:
-                print("Nu se poate face undo!")
+            lista = undo(lista, undo_list, redo_list)
+            #if len(undo_list) > 0:
+                #redo_list.append(lista)
+                #lista = undo_list.pop()
+            #else:
+                #print("Nu se poate face undo!")
         elif optiune == "r":
-            if len(redo_list) > 0:
-                undo_list.append(lista)
-                lista = redo_list.pop()
-            else:
-                print("Nu se poate face redo!")
+            lista = redo(lista, undo_list, redo_list)
+            #if len(redo_list) > 0:
+                #undo_list.append(lista)
+                #lista = redo_list.pop()
+            #else:
+                #print("Nu se poate face redo!")
         elif optiune == "a":
             show_all(lista)
         elif optiune == "x":

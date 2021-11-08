@@ -13,7 +13,7 @@ def stergere_cheltuieli(nr_ap, lista):
         raise ValueError("Nu exista o cheltuiala cu numarul apartamentului dat!")
     for cheltuiala in lista:
         if get_nr_ap(cheltuiala) == nr_ap:
-            lista = sterge_cheltuiala(nr_ap, lista)
+            lista = sterge_cheltuiala(get_id(cheltuiala), lista)
     return lista
 
 

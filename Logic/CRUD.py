@@ -18,7 +18,7 @@ def adauga_cheltuiala(id, nr_ap, suma, data, tip, lista):
         raise ValueError("Numarul apartamentului nu poate fi negativ!")
     if tip != "intretinere" and tip != "canal" and tip != "alte cheltuieli":
         raise ValueError("Dati un tip din cele precizate!")
-    if len(data) < 10 or (data[2] != '.' and data[5] != '.'):
+    if len(data) != 10 or (data[2] != '.' and data[5] != '.'):
         raise ValueError("Structura datei nu este conform cerintei!")
     ziua = data[0] + data[1]
     luna = data[3] + data[4]
@@ -94,6 +94,18 @@ def modifica_cheltuiala(id, nr_ap, suma, data, tip, lista):
     '''
     if get_by_id(id, lista) is None:
         raise ValueError("Nu exista o cheltuiala cu id-ul dat!")
+    if nr_ap < 0:
+        raise ValueError("Numarul apartamentului nu poate fi negativ!")
+    if tip != "intretinere" and tip != "canal" and tip != "alte cheltuieli":
+        raise ValueError("Dati un tip din cele precizate!")
+    if len(data) != 10 or (data[2] != '.' and data[5] != '.'):
+        raise ValueError("Structura datei nu este conform cerintei!")
+    ziua = data[0] + data[1]
+    luna = data[3] + data[4]
+    if int(ziua) > 31:
+        raise ValueError("O luna nu poate avea mai mult de 31 zile!")
+    if int(luna) > 12:
+        raise ValueError("Nu exista mai mult de 12 luni in an!")
     lista_noua = []
     for cheltuiala in lista:
         if get_id(cheltuiala) == id:
