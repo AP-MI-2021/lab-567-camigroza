@@ -85,9 +85,12 @@ def show_all(lista):
         print(to_string(cheltuiala))
 
 
-def ui_stergere_cheltuieli(lista, undo_list, redo_list):
+def ui_stergere_cheltuieli(lista, undo_list, redo_list, valori):
     try:
-        nr_ap = int(input("Dati numarul apartamentului pentru care trebuie sterse toate cheltuielile: "))
+        if len(valori) == 0:
+            nr_ap = int(input("Dati numarul apartamentului pentru care trebuie sterse toate cheltuielile: "))
+        else:
+            nr_ap = valori[0]
         rezultat = stergere_cheltuieli(nr_ap, lista)
         undo_list.append(lista)
         redo_list.clear()
@@ -97,10 +100,14 @@ def ui_stergere_cheltuieli(lista, undo_list, redo_list):
         return lista
 
 
-def ui_aduna_valoare(lista, undo_list, redo_list):
+def ui_aduna_valoare(lista, undo_list, redo_list, valori):
     try:
-        data = input("Dati data: ")
-        valoare = float(input("Dati valoarea pe care doriti sa o adunati la toate cheltuielile din data citita: "))
+        if len(valori) == 0:
+            data = input("Dati data: ")
+            valoare = float(input("Dati valoarea pe care doriti sa o adunati la toate cheltuielile din data citita: "))
+        else:
+            data = valori[0]
+            valoare = valori[1]
         rezultat = aduna_valoare(valoare, data, lista)
         undo_list.append(lista)
         redo_list.clear()
@@ -180,9 +187,9 @@ def run_menu(lista):
         elif optiune == "3":
             lista = ui_modifica_cheltuiala(lista, undo_list, redo_list, valori)
         elif optiune == "4":
-            lista = ui_stergere_cheltuieli(lista, undo_list, redo_list)
+            lista = ui_stergere_cheltuieli(lista, undo_list, redo_list, valori)
         elif optiune == "5":
-            lista = ui_aduna_valoare(lista, undo_list, redo_list)
+            lista = ui_aduna_valoare(lista, undo_list, redo_list, valori)
         elif optiune == "6":
             ui_max_cheltuiala_per_tip(lista)
         elif optiune == "7":

@@ -1,13 +1,14 @@
-from Domain.cheltuiala import get_nr_ap, get_suma, get_data, get_tip
+from Domain.cheltuiala import get_nr_ap, get_suma, get_data, get_tip, get_id
 from Logic.CRUD import get_by_id
-from UI.console import ui_adauga_cheltuiala, undo, redo, ui_sterge_cheltuiala, ui_modifica_cheltuiala
+from UI.console import ui_adauga_cheltuiala, undo, redo, ui_sterge_cheltuiala, ui_modifica_cheltuiala, \
+    ui_stergere_cheltuieli, ui_aduna_valoare, ui_ordonare_descrescator_suma
 
 
 def test_undo_redo():
 #1# lista initiala goala
     lista = []
 
-    undo_list =[]
+    undo_list = []
     redo_list = []
 
 #2# adaugam o cheltuiala
@@ -190,3 +191,70 @@ def test_undo_redo():
     assert get_data(get_by_id(1, lista)) == "12.12.2021"
     assert get_tip(get_by_id(1, lista)) == "alte cheltuieli"
 
+#test undo/redo la stergere cheltuieli
+    lista = []
+    valori = [1, 1, 100, "10.11.2021", "intretinere"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [2, 1, 200, "11.11.2021", "canal"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [3, 3, 300, "12.11.2021", "alte cheltuieli"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [1]
+    lista = ui_stergere_cheltuieli(lista, undo_list, redo_list, valori)
+    assert len(lista) == 1
+    assert get_by_id(1, lista) is None
+    assert get_by_id(2, lista) is None
+    assert get_by_id(3, lista) is not None
+    lista = undo(lista, undo_list, redo_list)
+    assert len(lista) == 3
+    assert get_by_id(1, lista) is not None
+    assert get_by_id(2, lista) is not None
+    assert get_by_id(3, lista) is not None
+    lista = redo(lista, undo_list, redo_list)
+    assert len(lista) == 1
+    assert get_by_id(1, lista) is None
+    assert get_by_id(2, lista) is None
+    assert get_by_id(3, lista) is not None
+
+#test undo/redo la aduna valoare
+    lista = []
+    valori = [1, 1, 100, "10.11.2021", "intretinere"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [2, 1, 200, "11.11.2021", "canal"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [3, 3, 300, "11.11.2021", "alte cheltuieli"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = ["11.11.2021", 100]
+    lista = ui_aduna_valoare(lista, undo_list, redo_list, valori)
+    assert get_suma(get_by_id(1, lista)) == 100
+    assert get_suma(get_by_id(2, lista)) == 300
+    assert get_suma(get_by_id(3, lista)) == 400
+    lista = undo(lista, undo_list, redo_list)
+    assert get_suma(get_by_id(1, lista)) == 100
+    assert get_suma(get_by_id(2, lista)) == 200
+    assert get_suma(get_by_id(3, lista)) == 300
+    lista = redo(lista, undo_list, redo_list)
+    assert get_suma(get_by_id(1, lista)) == 100
+    assert get_suma(get_by_id(2, lista)) == 300
+    assert get_suma(get_by_id(3, lista)) == 400
+
+#test undo/redo la ordonare descrescator dupa suma
+    lista = []
+    valori = [1, 1, 100, "10.11.2021", "intretinere"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [2, 1, 200, "11.11.2021", "canal"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    valori = [3, 3, 300, "11.11.2021", "alte cheltuieli"]
+    lista = ui_adauga_cheltuiala(lista, undo_list, redo_list, valori)
+    lista = ui_ordonare_descrescator_suma(lista, undo_list, redo_list)
+    assert get_id(lista[0]) == 3
+    assert get_id(lista[1]) == 2
+    assert get_id(lista[2]) == 1
+    lista = undo(lista, undo_list, redo_list)
+    assert get_id(lista[0]) == 1
+    assert get_id(lista[1]) == 2
+    assert get_id(lista[2]) == 3
+    lista = redo(lista, undo_list, redo_list)
+    assert get_id(lista[0]) == 3
+    assert get_id(lista[1]) == 2
+    assert get_id(lista[2]) == 1
